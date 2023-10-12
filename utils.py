@@ -18,7 +18,10 @@ last_day = pd.to_datetime('2023-10-05T00:00:00+00:00').date()
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv('eco2mix-regional.csv')
+    try:
+        df = pd.read_csv('eco2mix-regional.csv')
+    except FileNotFoundError:
+        df = pd.read_csv('https://elliotmv.s3.fr-par.scw.cloud/eco2mix-regional.csv')
 
     df_by_day = df.drop(['date_heure'], axis=1).groupby(['code_insee_region', 'libelle_region', 'date']).agg({
         'consommation': 'sum',
