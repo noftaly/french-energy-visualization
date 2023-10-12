@@ -52,7 +52,7 @@ chart_layers = [pdk.Layer(
 ) for energy_type in ['thermique', 'nucleaire', 'eolien', 'solaire', 'hydraulique', 'bioenergies']]
 
 st.pydeck_chart(pdk.Deck(
-    map_style='mapbox://styles/mapbox/dark-v9',
+    map_style='',
     initial_view_state=pdk.ViewState(
         latitude=47.5,
         longitude=2,
