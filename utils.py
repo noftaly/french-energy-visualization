@@ -58,6 +58,22 @@ def total_consumption_yesterday(df):
 
 
 @st.cache_data
+def total_consumption_this_year(df):
+    current_year = last_day.year
+    df = df[df['date'].dt.year == current_year]
+    return df['consommation'].sum()
+
+
+@st.cache_data
+def total_consumption_last_year(df):
+    last_year = last_day.year - 1
+    last_day_last_year = last_day - datetime.timedelta(days=365)
+    df = df[df['date'].dt.year == last_year]
+    df = df[df['date'].dt.date <= last_day_last_year]
+    return df['consommation'].sum()
+
+
+@st.cache_data
 def total_exchanges_today(df):
     df = df[df['date'].dt.date == last_day]
     return df['ech_physiques'].sum()
