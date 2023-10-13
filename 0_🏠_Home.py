@@ -56,8 +56,6 @@ st.markdown("""
 
             This dataset being very large, it is necessary to make a selection of the data to be displayed. For
             this, we will use the following filters:
-            - Time period: Week, Month, Year to date, All time
-            - Region: All Region, Auvergne-Rhône-Alpes, Bourgogne-Franche-Comté, Bretagne, Centre-Val de Loire,
-            Corse, Grand Est, Hauts-de-France, Île-de-France, Normandie, Nouvelle-Aquitaine, Occitanie,
-            Pays de la Loire, Provence-Alpes-Côte d'Azur.
+            - Time period: Week, Month, A Given Year (from 2013 to 2023), All time
+            - Region: All Region, or one of the French region.
             """)

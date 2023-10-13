@@ -5,7 +5,7 @@ df, df_by_day = load_data()
 
 st_category('Consumption')
 
-st.metric(label="Total consumption today", value=f'{int(total_consumption_today(df))} MW', delta=f'{int(total_consumption_today(df) - total_consumption_yesterday(df))} MW')
+st.metric(label="Total consumption today", value=format_watts(total_consumption_today(df)), delta=format_watts(total_consumption_today(df) - total_consumption_yesterday(df)))
 
 st_graph_title('Consumption of electricity in France over time')
 

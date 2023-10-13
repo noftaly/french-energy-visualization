@@ -133,12 +133,20 @@ def make_time_period_selector():
     return (period, year) if period == 'A Given Year' else (period, None)
 
 
+def format_watts(value):
+    if value >= 1000000:
+        return f'{value / 1000000:.1f} TW'
+    if value >= 1000:
+        return f'{value / 1000:.1f} GW'
+    return f'{value:.1f} MW'
+
+
 def st_category(name):
     st.header(name, divider='rainbow')
 
 
 def st_graph_title(name):
-    st.markdown(f'#### <center>{name}</center>', unsafe_allow_html=True)
+    st.markdown(f'#### <center style="margin-top: 50px">{name}</center>', unsafe_allow_html=True)
 
 
 region_coordinates = pd.DataFrame.from_dict({

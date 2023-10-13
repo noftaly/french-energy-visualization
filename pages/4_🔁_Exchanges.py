@@ -13,8 +13,8 @@ def render_metrics():
     exch_yesterday = int(total_exchanges_yesterday(df))
 
     col1, col2 = st.columns(2)
-    col1.metric(label=f"Total export today", value=f'{abs(min(exch_today, 0))} MW', delta=f'{abs(min(exch_today - exch_yesterday, 0))} MW')
-    col2.metric(label=f"Total import today", value=f'{max(exch_today, 0)} MW', delta=f'{max(exch_today - exch_yesterday, 0)} MW')
+    col1.metric(label=f"Total export today", value=format_watts(abs(min(exch_today, 0))), delta=format_watts(abs(min(exch_today - exch_yesterday, 0))))
+    col2.metric(label=f"Total import today", value=format_watts(max(exch_today, 0)), delta=format_watts(max(exch_today - exch_yesterday, 0)))
 
 render_metrics()
 
