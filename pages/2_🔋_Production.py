@@ -9,21 +9,37 @@ c_scale = alt.Scale(domain=list(color_scale_hex.keys()), range=list(color_scale_
 
 st_category('Production')
 
-st_graph_title('Energy production distribution over time')
-
 choice_period = make_time_period_selector()
 choice_region = st.selectbox('Select a region', get_region_list(df), key="energy_region")
+
+st_graph_title('Energy production over time')
+
+production_data = get_energy_sources_data(df, df_by_day, choice_period, choice_region) \
+    .groupby(['date']) \
+    .agg({'energy_value': 'sum'})
+
+st.line_chart(production_data)
+
+st_graph_title('Energy distribution')
+
+production_data = get_energy_sources_data(df, df_by_day, choice_period, choice_region) \
+    .groupby(['energy_source']) \
+    .agg({'energy_value': 'sum'})
+
+st.bar_chart(production_data)
+
+st_graph_title('Energy production distribution over time')
 
 energy_data = get_energy_sources_data(df, df_by_day, choice_period, choice_region)
 
 if choice_period[0] == Period.WEEK:
-    energy_data = energy_data.groupby(['energy_source', pd.Grouper(key='date', freq='6H')])
+    energy_data = energy_data.groupby(['energy_source', pd.Grouper(key='date', freq='15min')])
 elif choice_period[0] == Period.MONTH:
-    energy_data = energy_data.groupby(['energy_source', pd.Grouper(key='date', freq='D')])
+    energy_data = energy_data.groupby(['energy_source', pd.Grouper(key='date', freq='6H')])
 elif choice_period[0] == Period.YEAR:
-    energy_data = energy_data.groupby(['energy_source', pd.Grouper(key='date', freq='3D')])
+    energy_data = energy_data.groupby(['energy_source', pd.Grouper(key='date', freq='1D')])
 else:
-    energy_data = energy_data.groupby(['energy_source', pd.Grouper(key='date', freq='M')])
+    energy_data = energy_data.groupby(['energy_source', pd.Grouper(key='date', freq='15D')])
 
 energy_data = energy_data \
     .agg({'energy_value': 'sum'}) \

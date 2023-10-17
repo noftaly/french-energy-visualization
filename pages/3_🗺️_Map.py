@@ -23,6 +23,9 @@ sources_data = get_energy_sources_data_with_region(df, df_by_day, choice_period,
     .join(region_coordinates, on='libelle_region') \
     .reset_index()
 
+for energy_type in ['thermique', 'nucleaire', 'eolien', 'solaire', 'hydraulique', 'bioenergies']:
+    sources_data[energy_type] = sources_data.groupby('libelle_region')[energy_type].cumsum()
+
 scale_dynamically = st.toggle('Scale dynamically', value=False, help="""
                               If you scale dynamically, the columns will be scaled to fit into the screen, without any
                               relation from one time period to another. If the option is disabled, then the columns
@@ -34,10 +37,10 @@ def scale_factor():
     if choice_period[0] == Period.WEEK:
         return 0.1
     if choice_period[0] == Period.MONTH:
-        return 0.03
+        return 0.04
     if choice_period[0] == Period.YEAR:
         return 0.005
-    return 0.0005
+    return 0.0008
 
 chart_layers = [pdk.Layer(
     'ColumnLayer',
@@ -103,3 +106,8 @@ legend = """
     """.format(*map(lambda x: 'rgb({})'.format(', '.join([str(c) for c in x])), list(color_scale_rgb.values())))
 
 st.markdown(legend, unsafe_allow_html=True)
+
+st.markdown("""
+            As usual, we can see a lot of interesting data. First, something that might strike you is the proportion of
+            hydraulic energy in Auvergnes-Rhône-Alpes, and the proportion of wind in Hauts-de-France.
+            """)
