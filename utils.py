@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import datetime
+import time
 
 class Period:
     WEEK = "Last Week"
@@ -15,12 +16,37 @@ class Region:
 
 last_day = pd.to_datetime('2023-10-05T00:00:00+00:00').date()
 
+is_local = True
 
+def log_execution_time(filename="log.csv"):
+    def decorator(func):
+        def wrapped(*args, **kwargs):
+            if is_local:
+                start_time = time.time()
+                result = func(*args, **kwargs)
+                end_time = time.time()
+                execution_time = end_time - start_time
+                timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+                with open(filename, 'a') as log_file:
+                    log_file.write(f"{timestamp},{func.__name__},{execution_time:.6f}\n")
+
+                return result
+            else:
+                return func(*args, **kwargs)
+
+        return wrapped
+
+    return decorator
+
+
+@log_execution_time()
 @st.cache_data
 def load_data():
     try:
         df = pd.read_csv('eco2mix-regional.csv')
     except FileNotFoundError:
+        is_local = False
         df = pd.read_csv('https://elliotmv.s3.fr-par.scw.cloud/eco2mix-regional.csv')
 
     df_by_day = df.drop(['date_heure'], axis=1).groupby(['code_insee_region', 'libelle_region', 'date']).agg({
@@ -45,18 +71,21 @@ def load_data():
     return df, df_by_day
 
 
+@log_execution_time()
 @st.cache_data
 def total_consumption_today(df):
     df = df[df['date'].dt.date == last_day]
     return df['consommation'].sum()
 
 
+@log_execution_time()
 @st.cache_data
 def total_consumption_yesterday(df):
     df = df[df['date'].dt.date == last_day - datetime.timedelta(days=1)]
     return df['consommation'].sum()
 
 
+@log_execution_time()
 @st.cache_data
 def total_consumption_this_year(df):
     current_year = last_day.year
@@ -64,6 +93,7 @@ def total_consumption_this_year(df):
     return df['consommation'].sum()
 
 
+@log_execution_time()
 @st.cache_data
 def total_consumption_last_year(df):
     last_year = last_day.year - 1
@@ -73,18 +103,21 @@ def total_consumption_last_year(df):
     return df['consommation'].sum()
 
 
+@log_execution_time()
 @st.cache_data
 def total_exchanges_today(df):
     df = df[df['date'].dt.date == last_day]
     return df['ech_physiques'].sum()
 
 
+@log_execution_time()
 @st.cache_data
 def total_exchanges_yesterday(df):
     df = df[df['date'].dt.date == last_day - datetime.timedelta(days=1)]
     return df['ech_physiques'].sum()
 
 
+@log_execution_time()
 @st.cache_data
 def get_data_for_region_and_period(df, df_by_day, choice_period, choice_region):
     period, year = choice_period
@@ -109,6 +142,7 @@ def get_data_for_region_and_period(df, df_by_day, choice_period, choice_region):
     return df_asked
 
 
+@log_execution_time()
 @st.cache_data
 def get_consumption_data(df, df_by_day, choice_period, choice_region):
     return get_data_for_region_and_period(df, df_by_day, choice_period, choice_region) \
@@ -116,12 +150,14 @@ def get_consumption_data(df, df_by_day, choice_period, choice_region):
         .agg({ 'consommation': 'sum' })['consommation']
 
 
+@log_execution_time()
 @st.cache_data
 def get_energy_sources_data_with_region(df, df_by_day, choice_period, choice_region):
     return get_data_for_region_and_period(df, df_by_day, choice_period, choice_region) \
         .drop(['code_insee_region', 'consommation', 'ech_physiques'], axis=1)
 
 
+@log_execution_time()
 @st.cache_data
 def get_energy_sources_data(df, df_by_day, choice_period, choice_region):
     return get_energy_sources_data_with_region(df, df_by_day, choice_period, choice_region) \
@@ -129,11 +165,13 @@ def get_energy_sources_data(df, df_by_day, choice_period, choice_region):
         .melt(id_vars=['date'], var_name='energy_source', value_name='energy_value')
 
 
+@log_execution_time()
 @st.cache_data
 def get_exchange_data(df, df_by_day, choice_period, choice_region):
     return get_data_for_region_and_period(df, df_by_day, choice_period, choice_region)[['date', 'libelle_region', 'ech_physiques']].reset_index()
 
 
+@log_execution_time()
 @st.cache_data
 def get_region_list(df):
     return [Region.ALL_REGION, *[value for value in df['libelle_region'].unique()]]

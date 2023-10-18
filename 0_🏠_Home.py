@@ -29,12 +29,20 @@ st.title('Energy statistics in France')
 
 st.caption("""
             Data from [data.gouv.fr: éCO2mix](https://www.data.gouv.fr/fr/datasets/donnees-eco2mix-regionales-temps-reel-1/).\\
-            Document by Elliot MAISL, M1 DE2. 2023.
+            Document by [Elliot MAISL](https://linkedin.com/in/emaisl), M1 DE2. 2023.
             """)
 
 st.write('Date range: ', df['date'].min().strftime('%d/%m/%Y'), ' - ', df['date'].max().strftime('%d/%m/%Y'))
 
 st.markdown("""
+            ## How to explain the French position against the recent German decision to close nuclear power plants?
+
+            Recently, Germany announced closing its nuclear power plants in favor of thermal energy, and coal power
+            plants. This decision is surprising, as nuclear energy is one of the cleanest efficiant energy sources,
+            and France invested a lot in it. France stands strongly against this german decision, let's see why.
+
+            ## The dataset
+
             Let's analyze the energy consumption in France over time. For that, we will use the data from
             [data.gouv.fr: éCO2mix](https://www.data.gouv.fr/fr/datasets/donnees-eco2mix-regionales-temps-reel-1/).
             This data can be found on [RTE](https://www.rte-france.com/eco2mix) website, but also on
